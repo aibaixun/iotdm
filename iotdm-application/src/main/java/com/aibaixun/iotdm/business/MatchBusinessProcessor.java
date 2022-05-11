@@ -12,6 +12,12 @@ import com.aibaixun.iotdm.service.IProductService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -33,6 +39,10 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
     private IDevicePropertyReportService propertyReportService;
 
     private IProductService productService;
+
+    private static final ExpressionParser expressionParser = new SpelExpressionParser();
+
+    private static final ThreadLocal<EvaluationContext> contextLocals= new InheritableThreadLocal<>();
 
     public void processProperty(PrePropertyBusinessMsg prePropertyBusinessMsg){
         String productId = prePropertyBusinessMsg.getMetaData().getProductId();
@@ -85,13 +95,15 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
             modelLabel = jsonNode.get(modelLabelKey).asText("");
         }
         int size = jsonNode.size();
+        contextLocals.set(new StandardEvaluationContext());
         List<DevicePropertyReportEntity> results = new ArrayList<>(size);
         Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
         while (fields.hasNext()){
             Map.Entry<String, JsonNode> next = fields.next();
             List<ModelPropertyEntity> matchProperty = matchProperty(modelLabel,next.getKey(), modelEntityInfos, modelPropertyEntities);
-            changeDbEntity(deviceId, next.getValue(), matchProperty,results);
+            change2DbEntity(deviceId, next.getValue(), matchProperty,results);
         }
+        contextLocals.remove();
         return results;
     }
 
@@ -111,14 +123,14 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
     }
 
 
-    public void changeDbEntity(String deviceId,JsonNode jsonNode,List<ModelPropertyEntity> matchProperties,List<DevicePropertyReportEntity> reportEntities){
+    public void change2DbEntity(String deviceId,JsonNode jsonNode,List<ModelPropertyEntity> matchProperties,List<DevicePropertyReportEntity> reportEntities){
         if (CollectionUtils.isEmpty(matchProperties)){
             return;
         }
         for (ModelPropertyEntity modelPropertyEntity : matchProperties) {
             String id = modelPropertyEntity.getId();
-            String value = jsonNode.asText();
             String label = modelPropertyEntity.getPropertyLabel();
+            String value = spElExpression(label,jsonNode.asText(),modelPropertyEntity.getExpression());
             reportEntities.add(new DevicePropertyReportEntity(deviceId,id,value,label));
         }
     }
@@ -130,6 +142,21 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
             result.add(new TsData(entity.getTs(), entity.getPropertyLabel(),entity.getPropertyValue()));
         }
         return result;
+    }
+
+
+    private String spElExpression(String propertyLabel,String propertyValue,String expression){
+        if (StringUtils.isEmpty(expression)){
+            return propertyValue;
+        }
+        Expression spElExpression = expressionParser.parseExpression(expression);
+        EvaluationContext evaluationContext = contextLocals.get();
+        evaluationContext.setVariable(propertyLabel,propertyValue);
+        try {
+            return String.valueOf(spElExpression.getValue());
+        }catch (Exception e){
+            return propertyValue;
+        }
     }
 
 
@@ -148,4 +175,8 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
     public void setProductService(IProductService productService) {
         this.productService = productService;
     }
+
+
+
+
 }

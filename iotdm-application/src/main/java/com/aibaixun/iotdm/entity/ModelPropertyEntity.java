@@ -64,6 +64,13 @@ public class ModelPropertyEntity extends BaseEntity {
     private String description;
 
 
+    /**
+     * 计算表达式 SpEL
+     */
+    private String expression;
+
+
+
     public String getProductModelId() {
         return productModelId;
     }
@@ -126,6 +133,14 @@ public class ModelPropertyEntity extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     @Override
