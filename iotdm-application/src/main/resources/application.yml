@@ -2,7 +2,7 @@ spring:
   application:
     name: IotDmApplication
   profiles:
-    active: qa
+    active: dev
   cache:
     redis:
       key-prefix: "IOTdm:"

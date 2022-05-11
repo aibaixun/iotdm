@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
@@ -40,9 +39,9 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
 
     private IProductService productService;
 
-    private static final ExpressionParser expressionParser = new SpelExpressionParser();
+    private  final ExpressionParser expressionParser = new SpelExpressionParser();
 
-    private static final ThreadLocal<EvaluationContext> contextLocals= new InheritableThreadLocal<>();
+    private  final ThreadLocal<EvaluationContext> contextLocals= new InheritableThreadLocal<>();
 
     public void processProperty(PrePropertyBusinessMsg prePropertyBusinessMsg){
         String productId = prePropertyBusinessMsg.getMetaData().getProductId();
