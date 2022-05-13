@@ -4,13 +4,14 @@ IOTdm: 百讯物联网设备接入平台
 
 ## 设计思路与表结构设计
 
-http://wiki.baixun.com/x/P4AWAQ
+http://wiki.baixun.com/x/P4AWAQ 
 
 ## 功能
 - 设备连接
 - 数据解析
 - 规则转发
 - 在线调试
+- 简单的数值计算 比如0XFFF 转int ,乘以100 保留小数点位数
 
 ## 包结构
 ```
@@ -22,6 +23,8 @@ iotdm
 ├── iotdm-rule           转发规则,消费消息队列 触发规则并转发出去
 │    
 └── iotdm-transport      设备接入与数据传输
+dist 前端打包后文件
+sql 第一次运行需要初始化的sql
 ```  
 ## 设备消息流程
 Transport 接入设备,并开启socket,读取缓冲区数据,解析数据并发送Spring的Event</br>
@@ -43,7 +46,7 @@ Transport 监听上述Event 并且在内存中找到Socket信息的引用,见数
 ```
 二进制报文
 ```
- 
+ 0101010101
 ```
 
 ## 说明 
@@ -91,3 +94,35 @@ v1.0.0 分支是基础版本开发分支，该分支主要迭代的功能是设�
 - [ ] TCP 连接服务
 - [ ] 设备联动
 - [ ] 数据持久化配置
+
+## 快速开始
+- 执行init.sql
+- 启动项目
+- 将前端放置在nginx 服务
+
+## 演示
+- 首页
+  [![OncQxS.png](https://s1.ax1x.com/2022/05/06/OncQxS.png)](https://imgtu.com/i/OncQxS)
+- 产品列表
+  [![OnRqiR.png](https://s1.ax1x.com/2022/05/06/OnRqiR.png)](https://imgtu.com/i/OnRqiR)
+- 产品模型
+  [![OnRvQK.png](https://s1.ax1x.com/2022/05/06/OnRvQK.png)](https://imgtu.com/i/OnRvQK)
+- 脚本解析
+  [![OnflHe.png](https://s1.ax1x.com/2022/05/06/OnflHe.png)](https://imgtu.com/i/OnflHe)
+- 设备管理
+  [![OnWy6K.png](https://s1.ax1x.com/2022/05/06/OnWy6K.png)](https://imgtu.com/i/OnWy6K)
+  [![OnWvhn.png](https://s1.ax1x.com/2022/05/06/OnWvhn.png)](https://imgtu.com/i/OnWvhn)
+- 规则转发
+  [![Onfgg0.png](https://s1.ax1x.com/2022/05/06/Onfgg0.png)](https://imgtu.com/i/Onfgg0)
+  [![Onf2vV.png](https://s1.ax1x.com/2022/05/06/Onf2vV.png)](https://imgtu.com/i/Onf2vV)
+- 资源管理
+  [![OnffDU.png](https://s1.ax1x.com/2022/05/06/OnffDU.png)](https://imgtu.com/i/OnffDU)
+- 新手指引
+  [![On2Pne.png](https://s1.ax1x.com/2022/05/06/On2Pne.png)](https://imgtu.com/i/On2Pne)
+- 在线调试
+  [![Onfo59.png](https://s1.ax1x.com/2022/05/06/Onfo59.png)](https://imgtu.com/i/Onfo59)
+## 联系人 
+wangxiao@aibaixun.com
+
+## 所有权
+贵州百讯智汇科技有限公司
