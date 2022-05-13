@@ -77,7 +77,6 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
         }catch (Exception e){
             logD2P(deviceId, BusinessStep.MATCH_MODEL,"Match Model property is empty"+e.getMessage(),false);
         }
-
         propertyReportService.saveOrUpdateBatchDeviceProperties(deviceId,reportEntities);
         logD2P(deviceId, BusinessStep.MATCH_MODEL, JsonUtil.toJSONString(reportEntities),true);
         queueBusinessProcessor.processProperty2Mq(new PostPropertyBusinessMsg(prePropertyBusinessMsg.getMetaData(),toTsData(reportEntities)));
@@ -131,7 +130,8 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
         for (ModelPropertyEntity modelPropertyEntity : matchProperties) {
             String id = modelPropertyEntity.getId();
             String label = modelPropertyEntity.getPropertyLabel();
-            Object value = spElExpression(label,getJsonValue(jsonNode,modelPropertyEntity.getDataType()),modelPropertyEntity.getExpression());
+            DataType dataType = modelPropertyEntity.getDataType();
+            Object value = spElExpression(label,dataType.parseJsonNode(jsonNode),modelPropertyEntity.getExpression());
             reportEntities.add(new DevicePropertyReportEntity(deviceId,id,value,label));
         }
     }
@@ -160,28 +160,7 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
         }
     }
 
-    private Object  getJsonValue(JsonNode jsonNode, DataType dataType) {
-        switch (dataType){
-            case INT:
-                return jsonNode.asInt();
-            case STR:
-                return jsonNode.asText();
-            case DECIMAL:
-                return jsonNode.asDouble();
-            case JSON:
-                return jsonNode.asText("{}");
-            case INT_LIST:
-                if (jsonNode.isArray()){
-                    return JsonUtil.<Long>toList(jsonNode.textValue());
-                }
-            case STR_LIST:
-                if (jsonNode.isArray()){
-                    return JsonUtil.<Session>toList(jsonNode.textValue());
-                }
-            default:
-                return jsonNode.asText();
-        }
-    }
+
 
 
     @Autowired
