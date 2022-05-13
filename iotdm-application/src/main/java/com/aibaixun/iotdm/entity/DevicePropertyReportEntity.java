@@ -39,7 +39,7 @@ public class DevicePropertyReportEntity implements Serializable {
     /**
      * 属性值
      */
-    private String propertyValue;
+    private Object propertyValue;
 
     /**
      * 时间
@@ -51,7 +51,7 @@ public class DevicePropertyReportEntity implements Serializable {
     }
 
 
-    public DevicePropertyReportEntity(String deviceId, String propertyId, String propertyValue,String propertyLabel) {
+    public DevicePropertyReportEntity(String deviceId, String propertyId, Object propertyValue,String propertyLabel) {
         this.deviceId = deviceId;
         this.propertyId = propertyId;
         this.propertyValue = propertyValue;
@@ -84,11 +84,11 @@ public class DevicePropertyReportEntity implements Serializable {
         this.propertyId = propertyId;
     }
 
-    public String getPropertyValue() {
+    public Object getPropertyValue() {
         return propertyValue;
     }
 
-    public void setPropertyValue(String propertyValue) {
+    public void setPropertyValue(Object propertyValue) {
         this.propertyValue = propertyValue;
     }
 

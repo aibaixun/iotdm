@@ -6,12 +6,14 @@ import com.aibaixun.iotdm.data.ProductModelEntityInfo;
 import com.aibaixun.iotdm.entity.DevicePropertyReportEntity;
 import com.aibaixun.iotdm.entity.ModelPropertyEntity;
 import com.aibaixun.iotdm.enums.BusinessStep;
+import com.aibaixun.iotdm.enums.DataType;
 import com.aibaixun.iotdm.msg.TsData;
 import com.aibaixun.iotdm.service.IDevicePropertyReportService;
 import com.aibaixun.iotdm.service.IProductService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -129,7 +131,7 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
         for (ModelPropertyEntity modelPropertyEntity : matchProperties) {
             String id = modelPropertyEntity.getId();
             String label = modelPropertyEntity.getPropertyLabel();
-            String value = spElExpression(label,jsonNode.asText(),modelPropertyEntity.getExpression());
+            Object value = spElExpression(label,getJsonValue(jsonNode,modelPropertyEntity.getDataType()),modelPropertyEntity.getExpression());
             reportEntities.add(new DevicePropertyReportEntity(deviceId,id,value,label));
         }
     }
@@ -144,7 +146,7 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
     }
 
 
-    private String spElExpression(String propertyLabel,String propertyValue,String expression){
+    private Object spElExpression(String propertyLabel,Object propertyValue,String expression){
         if (StringUtils.isEmpty(expression)){
             return propertyValue;
         }
@@ -152,9 +154,32 @@ public class MatchBusinessProcessor extends AbstractBusinessProcessor{
         EvaluationContext evaluationContext = contextLocals.get();
         evaluationContext.setVariable(propertyLabel,propertyValue);
         try {
-            return String.valueOf(spElExpression.getValue());
+            return spElExpression.getValue(evaluationContext);
         }catch (Exception e){
             return propertyValue;
+        }
+    }
+
+    private Object  getJsonValue(JsonNode jsonNode, DataType dataType) {
+        switch (dataType){
+            case INT:
+                return jsonNode.asInt();
+            case STR:
+                return jsonNode.asText();
+            case DECIMAL:
+                return jsonNode.asDouble();
+            case JSON:
+                return jsonNode.asText("{}");
+            case INT_LIST:
+                if (jsonNode.isArray()){
+                    return JsonUtil.<Long>toList(jsonNode.textValue());
+                }
+            case STR_LIST:
+                if (jsonNode.isArray()){
+                    return JsonUtil.<Session>toList(jsonNode.textValue());
+                }
+            default:
+                return jsonNode.asText();
         }
     }
 

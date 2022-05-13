@@ -13,6 +13,7 @@
             <result column="data_type" property="dataType" />
             <result column="scope" property="scope" />
             <result column="mpdescription" property="description" />
+            <result column="mpexpression" property="expression" />
         </collection>
 
         <collection property="commands" ofType="com.aibaixun.iotdm.entity.ModelCommandEntity" notNullColumn="mcid">
@@ -35,6 +36,7 @@
             mp.data_type,
             mp.scope,
             mp.description as mpdescription ,
+            mp.expression as mpexpression,
             mc.id AS mcid,
             mc.command_label,
             mc.description as mcdescription ,

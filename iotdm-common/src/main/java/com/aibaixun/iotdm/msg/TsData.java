@@ -13,10 +13,10 @@ public class TsData implements Serializable {
 
     private String tsLabel;
 
-    private String tsValue;
+    private Object tsValue;
 
 
-    public TsData(Long ts,  String tsLabel, String tsValue) {
+    public TsData(Long ts,  String tsLabel, Object tsValue) {
         this.ts = ts;
         this.tsLabel = tsLabel;
         this.tsValue = tsValue;
@@ -42,11 +42,11 @@ public class TsData implements Serializable {
         this.tsLabel = tsLabel;
     }
 
-    public String getTsValue() {
+    public Object getTsValue() {
         return tsValue;
     }
 
-    public void setTsValue(String tsValue) {
+    public void setTsValue(Object tsValue) {
         this.tsValue = tsValue;
     }
 
