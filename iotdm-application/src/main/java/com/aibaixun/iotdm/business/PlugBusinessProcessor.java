@@ -1,16 +1,13 @@
 package com.aibaixun.iotdm.business;
 
-import com.aibaixun.basic.toolkit.HexTool;
-import com.aibaixun.common.util.JsonUtil;
+import com.aibaixun.iotdm.business.plugin.PluginFactory;
 import com.aibaixun.iotdm.constants.TopicConstants;
 import com.aibaixun.iotdm.enums.BusinessStep;
 import com.aibaixun.iotdm.enums.DataFormat;
-import com.aibaixun.iotdm.script.JsInvokeService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.script.ScriptException;
 import java.util.Objects;
 
 /**
@@ -21,7 +18,7 @@ import java.util.Objects;
 @Component
 public class PlugBusinessProcessor extends AbstractBusinessProcessor{
 
-    private JsInvokeService jsInvokeService;
+
 
     private MatchBusinessProcessor matchBusinessProcessor;
 
@@ -78,23 +75,11 @@ public class PlugBusinessProcessor extends AbstractBusinessProcessor{
      * @param productId 产品id
      * @param topic 主题
      */
-    private JsonNode invokePluginMethod (DataFormat dataFormat,String payload,String productId,String topic) throws ScriptException, NoSuchMethodException {
-        JsonNode jsonNode = null;
-        if (DataFormat.JSON.equals(dataFormat)){
-            jsonNode = JsonUtil.parse(payload);
-        }else if (DataFormat.BINARY.equals(dataFormat)){
-            // todo 获取插件时候需要后期重构 设计思路采用工厂模式或者SPI
-            byte [] messageBytes = HexTool.decodeHex(payload);
-            String jsResult = (String)jsInvokeService.invokeDecodeFunction(productId, messageBytes, topic);
-            jsonNode = JsonUtil.parse(jsResult);
-        }
-        return jsonNode;
+    private JsonNode invokePluginMethod (DataFormat dataFormat,String payload,String productId,String topic) {
+        return PluginFactory.getPluginProcessor(dataFormat).processPluginMethod(payload,productId,topic);
     }
 
-    @Autowired
-    public void setJsInvokeService(JsInvokeService jsInvokeService) {
-        this.jsInvokeService = jsInvokeService;
-    }
+
 
 
     @Autowired
