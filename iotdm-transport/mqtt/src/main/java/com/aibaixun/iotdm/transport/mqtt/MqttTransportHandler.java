@@ -1,6 +1,6 @@
 package com.aibaixun.iotdm.transport.mqtt;
 
-import com.aibaixun.basic.toolkit.HexTool;
+import com.aibaixun.basic.util.HexTool;
 import com.aibaixun.iotdm.enums.DataFormat;
 import com.aibaixun.iotdm.enums.ProtocolType;
 import com.aibaixun.iotdm.msg.*;

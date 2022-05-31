@@ -32,7 +32,6 @@
         <mysql.version>8.0.25</mysql.version>
         <iotdm.version>1.0.0</iotdm.version>
         <okhttp.version>3.10.0</okhttp.version>
-        <common-pool2.version>2.6.2</common-pool2.version>
     </properties>
 
 
@@ -43,6 +42,11 @@
             <dependency>
                 <groupId>com.aibaixun</groupId>
                 <artifactId>spring-boot-starter-redis</artifactId>
+                <version>${baixun.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aibaixun</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
                 <version>${baixun.version}</version>
             </dependency>
             <dependency>
@@ -101,9 +105,9 @@
                 <version>${okhttp.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-pool2</artifactId>
-                <version>${common-pool2.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.0.1-jre</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
