@@ -503,7 +503,7 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
      * @param msgId 消息id
      */
     private void  processMessageUp(ChannelHandlerContext channelHandlerContext,MqttPublishMessage mqttPublishMessage,int msgId) {
-        String payload = getHexPayload(mqttPublishMessage.payload());
+        String payload = getPayload(mqttPublishMessage);
         transportService.processMessageUp(deviceSessionCtx.getSessionId(),deviceSessionCtx.getDataFormat(),  payload, pubAckCallback(channelHandlerContext,msgId));
         transportService.reportActivity(deviceSessionCtx.getSessionId());
     }
