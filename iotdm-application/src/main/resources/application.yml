@@ -1,13 +1,18 @@
 spring:
   application:
-    name: IotDmApplication
+    name: iotdm
   profiles:
-    active: qa
+    active: dev
   cache:
     redis:
       key-prefix: "IOTdm:"
     type: redis
-
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.8.5:8848
+        namespace: dev
+        group: dev
 IOTdm:
   label: IotDmApplication
   version: 1.0.0
