@@ -1,6 +1,6 @@
 package com.aibaixun.iotdm.business.plugin;
 
-import com.aibaixun.basic.toolkit.HexTool;
+import com.aibaixun.basic.util.HexTool;
 import com.aibaixun.common.util.JsonUtil;
 import com.aibaixun.iotdm.enums.DataFormat;
 import com.aibaixun.iotdm.script.JsInvokeService;

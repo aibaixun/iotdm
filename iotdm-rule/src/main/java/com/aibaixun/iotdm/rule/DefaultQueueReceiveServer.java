@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -40,12 +41,14 @@ public class DefaultQueueReceiveServer implements QueueReceiveServer {
 
     private ForwardService forwardService;
 
+
+
     @Override
     @StreamListener(IotDmSink.INPUT_PROPERTY_TS_DATA)
-    public <T> void receivePropertyTsData(GenericMessage<T> tsData) {
+    public void receivePropertyTsData(Message<PostPropertyBusinessMsg> tsData) {
         log.info("QueueReceiveService receivePropertyTsData:{}",tsData);
         try {
-            PostPropertyBusinessMsg propertyTsData = JsonUtil.toObject(tsData.getPayload().toString(),PostPropertyBusinessMsg.class) ;
+            PostPropertyBusinessMsg propertyTsData = tsData.getPayload() ;
             String productId = propertyTsData.getMetaData().getProductId();
             List<ForwardRuleInfo> forwardRule = getForwardRule(productId);
             List<ForwardRuleInfo> forwardRuleInfos = matchForwardRule(SubjectResource.DEVICE_PROPERTY, SubjectEvent.DEVICE_PROPERTY_REPORT, forwardRule);
@@ -53,17 +56,14 @@ public class DefaultQueueReceiveServer implements QueueReceiveServer {
         }catch (Exception e){
             log.info("QueueReceiveService receivePropertyTsData,error is:{}",e.getMessage());
         }
-
     }
-
-
 
     @Override
     @StreamListener(IotDmSink.INPUT_MESSAGE_TS_DATA)
-    public <T> void receiveMessageTsData(GenericMessage<T> tsData) {
+    public void receiveMessageTsData(Message<MessageBusinessMsg> tsData) {
         log.info("QueueReceiveService receiveMessageTsData:{}",tsData);
         try {
-            MessageBusinessMsg messageTsData = JsonUtil.toObject(tsData.getPayload().toString(),MessageBusinessMsg.class);
+            MessageBusinessMsg messageTsData = tsData.getPayload();
             String productId = messageTsData.getMetaData().getProductId();
             List<ForwardRuleInfo> forwardRule = getForwardRule(productId);
             List<ForwardRuleInfo> forwardRuleInfos = matchForwardRule(SubjectResource.DEVICE_MESSAGE, SubjectEvent.DEVICE_MESSAGE_REPORT, forwardRule);
@@ -71,15 +71,14 @@ public class DefaultQueueReceiveServer implements QueueReceiveServer {
         }catch (Exception e){
             log.info("QueueReceiveService receiveMessageTsData,error is:{}",e.getMessage());
         }
-
     }
 
     @Override
     @StreamListener(IotDmSink.INPUT_SESSION_DATA)
-    public <T> void receiveSessionData(GenericMessage<T> sessionData) {
+    public void receiveSessionData(Message<DeviceSessionEvent> sessionData) {
         log.info("QueueReceiveService receiveSessionData:{}",sessionData);
         try {
-            DeviceSessionEvent sessionEventData =  JsonUtil.toObject(sessionData.getPayload().toString(),DeviceSessionEvent.class);
+            DeviceSessionEvent sessionEventData = sessionData.getPayload();
             String productId = sessionEventData.getProductId();
             List<ForwardRuleInfo> forwardRule = getForwardRule(productId);
             List<ForwardRuleInfo> forwardRuleInfos = matchForwardRule(SubjectResource.DEVICE_STATUS, SubjectEvent.DEVICE_STATUS_UPDATE, forwardRule);
@@ -87,16 +86,14 @@ public class DefaultQueueReceiveServer implements QueueReceiveServer {
         }catch (Exception e){
             log.info("QueueReceiveService receiveSessionData,error is:{}",e.getMessage());
         }
-
     }
-
 
     @Override
     @StreamListener(IotDmSink.INPUT_ENTITY_DATA)
-    public <T> void receiveEntityData(GenericMessage<T> entityData) {
+    public void receiveEntityData(Message<EntityChangeEvent> entityData) {
         log.info("QueueReceiveService receiveEntityData:{}",entityData);
         try {
-            EntityChangeEvent entityChangeEvent = JsonUtil.toObject(entityData.getPayload().toString(),EntityChangeEvent.class);
+            EntityChangeEvent entityChangeEvent = entityData.getPayload();
             List<ForwardRuleInfo> forwardRule = ruleService.queryForwardRule(entityChangeEvent.getTenantId());
             List<ForwardRuleInfo> forwardRuleInfos = matchForwardRule(entityChangeEvent.getSubjectResource(), entityChangeEvent.getSubjectEvent(), forwardRule);
             forwardService.sendMessage(entityData,forwardRuleInfos);
@@ -104,6 +101,8 @@ public class DefaultQueueReceiveServer implements QueueReceiveServer {
             log.info("QueueReceiveService receiveSessionData,error is:{}",e.getMessage());
         }
     }
+
+
 
 
     /**

@@ -3,7 +3,7 @@ package com.aibaixun.iotdm.server;
 
 import com.aibaixun.basic.exception.BaseException;
 import com.aibaixun.basic.result.BaseResultCode;
-import com.aibaixun.basic.toolkit.HexTool;
+import com.aibaixun.basic.util.HexTool;
 import com.aibaixun.common.util.JsonUtil;
 import com.aibaixun.iotdm.data.BaseParam;
 import com.aibaixun.iotdm.data.ToDeviceConfigParam;
