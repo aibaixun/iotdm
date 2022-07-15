@@ -1,6 +1,10 @@
 package com.aibaixun.iotdm.queue;
 
-import org.springframework.messaging.support.GenericMessage;
+import com.aibaixun.iotdm.business.MessageBusinessMsg;
+import com.aibaixun.iotdm.business.PostPropertyBusinessMsg;
+import com.aibaixun.iotdm.event.DeviceSessionEvent;
+import com.aibaixun.iotdm.event.EntityChangeEvent;
+import org.springframework.messaging.Message;
 
 /**
  * @author wangxiao@aibaixun.com
@@ -12,14 +16,14 @@ public interface QueueReceiveServer {
      * 接受 消息队列的时序数据
      * @param tsData 数据
      */
-    <T> void receivePropertyTsData(GenericMessage<T> tsData);
+     void receivePropertyTsData(Message<PostPropertyBusinessMsg> tsData);
 
 
     /**
      * 接受 消息队列的时序数据
      * @param tsData 数据
      */
-    <T> void receiveMessageTsData(GenericMessage<T> tsData);
+    void receiveMessageTsData(Message<MessageBusinessMsg> tsData);
 
 
 
@@ -27,7 +31,7 @@ public interface QueueReceiveServer {
      * 接受 消息队列session数据
      * @param sessionData 数据
      */
-    <T> void receiveSessionData(GenericMessage<T> sessionData);
+     void receiveSessionData(Message<DeviceSessionEvent> sessionData);
 
 
 
@@ -35,5 +39,5 @@ public interface QueueReceiveServer {
      * 接受 实体数据数据
      * @param entityData 数据
      */
-    <T> void receiveEntityData(GenericMessage<T> entityData);
+     void receiveEntityData(Message<EntityChangeEvent> entityData);
 }
